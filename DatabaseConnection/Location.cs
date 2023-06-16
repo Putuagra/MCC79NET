@@ -4,8 +4,9 @@ namespace DatabaseConnection;
 
 public class Location
 {
-    string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
-    SqlConnection connection;
+    /*string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
+    SqlConnection connection;*/
+    SqlConnection connection = Connection.GetConnection();
     public int id { get; set; }
     public string? street_address { get; set; }
     public string? postal_code { get; set; }
@@ -16,16 +17,18 @@ public class Location
     public List<Location> GetAllLocation()
     {
         var location = new List<Location>();
+
         try
         {
-            connection = new SqlConnection(connectionString);
+            //connection = new SqlConnection(connectionString);
+
             //instance command
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = "SELECT * FROM tb_m_locations";
 
             //membuka koneksi
-            connection.Open();
+            //connection.Open();
 
             using SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)

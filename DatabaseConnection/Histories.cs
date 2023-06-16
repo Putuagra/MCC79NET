@@ -4,8 +4,9 @@ namespace DatabaseConnection;
 
 public class Histories
 {
-    string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
-    SqlConnection connection;
+    /*string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
+    SqlConnection connection;*/
+    SqlConnection connection = Connection.GetConnection();
 
     public DateTime start_date { get; set; }
     public int employee_id { get; set; }
@@ -16,16 +17,18 @@ public class Histories
     public List<Histories> GetAllHistories()
     {
         var histories = new List<Histories>();
+
         try
         {
-            connection = new SqlConnection(connectionString);
+            //SqlConnection connection = Connection.GetConnection();
+            //connection = new SqlConnection(connectionString);
             //instance command
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = "SELECT * FROM tb_tr_histories";
 
             //membuka koneksi
-            connection.Open();
+            //connection.Open();
 
             using SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)

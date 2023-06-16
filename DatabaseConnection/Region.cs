@@ -8,23 +8,24 @@ public class Region
     public int Id { get; set; }
     public string Name { get; set; }
 
-    string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
-    SqlConnection connection;
-
+    /*string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
+    SqlConnection connection;*/
+    SqlConnection connection = Connection.GetConnection();
 
     public List<Region> GetAllRegions()
     {
         var region = new List<Region>();
         try
         {
-            connection = new SqlConnection(connectionString);
+            //connection = new SqlConnection(connectionString);
             //instance command
+            SqlConnection connection = Connection.GetConnection();
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = "SELECT * FROM tb_m_regions";
 
             //membuka koneksi
-            connection.Open();
+            //onnection.Open();
 
             using SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
@@ -53,9 +54,10 @@ public class Region
     public int InsertRegion(string name)
     {
         int result = 0;
-        connection = new SqlConnection(connectionString);
+        //connection = new SqlConnection(connectionString);
 
-        connection.Open();
+        //connection.Open();
+        SqlConnection connection = Connection.GetConnection();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {
@@ -95,14 +97,15 @@ public class Region
         var region = new List<Region>();
         try
         {
-            connection = new SqlConnection(connectionString);
+            //connection = new SqlConnection(connectionString);
             //instance command
+            SqlConnection connection = Connection.GetConnection();
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = "SELECT * FROM tb_m_regions WHERE id = @id";
 
             //membuka koneksi
-            connection.Open();
+            //connection.Open();
             SqlParameter pName = new SqlParameter();
             pName.ParameterName = "@id";
             pName.Value = id;
@@ -138,9 +141,10 @@ public class Region
     public int UpdateRegion(int id, string nama)
     {
         int result = 0;
-        connection = new SqlConnection(connectionString);
+        /*connection = new SqlConnection(connectionString);
 
-        connection.Open();
+        connection.Open();*/
+        SqlConnection connection = Connection.GetConnection();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {
@@ -183,9 +187,10 @@ public class Region
     public int DeleteRegion(int id)
     {
         int result = 0;
-        connection = new SqlConnection(connectionString);
+        /*connection = new SqlConnection(connectionString);
 
-        connection.Open();
+        connection.Open();*/
+        SqlConnection connection = Connection.GetConnection();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {

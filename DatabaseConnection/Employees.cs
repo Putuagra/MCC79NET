@@ -4,8 +4,9 @@ namespace DatabaseConnection;
 
 public class Employees
 {
-    string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
-    SqlConnection connection;
+    /*string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
+    SqlConnection connection;*/
+    SqlConnection connection = Connection.GetConnection();
 
     public int id { get; set; }
     public string first_name { get; set; }
@@ -22,16 +23,18 @@ public class Employees
     public List<Employees> GetAllEmployees()
     {
         var Employee = new List<Employees>();
+
         try
         {
-            connection = new SqlConnection(connectionString);
+            //SqlConnection connection = Connection.GetConnection();
+            /*connection = new SqlConnection(connectionString);*/
             //instance command
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = "SELECT * FROM tb_m_employees";
 
             //membuka koneksi
-            connection.Open();
+            //connection.Open();
 
             using SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)

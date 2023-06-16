@@ -9,22 +9,23 @@ public class Country
     public string name { get; set; }
     public int region_id { get; set; }
 
-    string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
-    SqlConnection connection;
+    //string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
+    SqlConnection connection = Connection.GetConnection();
 
     public List<Country> GetAllCountry()
     {
         var country = new List<Country>();
         try
         {
-            connection = new SqlConnection(connectionString);
+            //connection = new SqlConnection(connectionString);
+            //SqlConnection connection = Connection.GetConnection();
             //instance command
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = "SELECT * FROM tb_m_countries";
 
             //membuka koneksi
-            connection.Open();
+            //connection.Open();
 
             using SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
@@ -55,9 +56,10 @@ public class Country
     public int InsertCountry(string id, string name, int reg_id)
     {
         int result = 0;
-        connection = new SqlConnection(connectionString);
+        SqlConnection connection = Connection.GetConnection();
+        //connection = new SqlConnection(connectionString);
 
-        connection.Open();
+        //connection.Open();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {
@@ -109,14 +111,15 @@ public class Country
         var country = new List<Country>();
         try
         {
-            connection = new SqlConnection(connectionString);
+            //connection = new SqlConnection(connectionString);
             //instance command
+            SqlConnection connection = Connection.GetConnection();
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = "SELECT * FROM tb_m_countries WHERE id = @id";
 
             //membuka koneksi
-            connection.Open();
+            //connection.Open();
             SqlParameter pName = new SqlParameter();
             pName.ParameterName = "@id";
             pName.Value = id;
@@ -153,9 +156,10 @@ public class Country
     public int UpdateCountry(string id, string nama, int region_id)
     {
         int result = 0;
-        connection = new SqlConnection(connectionString);
+        SqlConnection connection = Connection.GetConnection();
+        //connection = new SqlConnection(connectionString);
 
-        connection.Open();
+        //connection.Open();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {
@@ -204,9 +208,10 @@ public class Country
     public int DeleteCountry(string id)
     {
         int result = 0;
-        connection = new SqlConnection(connectionString);
+        //connection = new SqlConnection(connectionString);
 
-        connection.Open();
+        SqlConnection connection = Connection.GetConnection();
+        //connection.Open();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {
