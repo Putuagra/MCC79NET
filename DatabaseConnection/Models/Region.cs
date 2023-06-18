@@ -1,46 +1,42 @@
-﻿using System.Data;
+﻿using DatabaseConnection.Contexts;
+using DatabaseConnection.Views;
+using System.Data;
 using System.Data.SqlClient;
 
-namespace DatabaseConnection;
+namespace DatabaseConnection.Models;
 
 public class Region
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    private Handling _handling = new Handling();
 
-    /*string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
-    SqlConnection connection;*/
-    SqlConnection connection = Connection.GetConnection();
-
-    public List<Region> GetAllRegions()
+    public List<Region> GetAll()
     {
+        SqlConnection connection = AllConnection.GetConnection();
+        connection.Open();
         var region = new List<Region>();
         try
         {
-            //connection = new SqlConnection(connectionString);
             //instance command
-            SqlConnection connection = Connection.GetConnection();
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = "SELECT * FROM tb_m_regions";
-
-            //membuka koneksi
-            //onnection.Open();
 
             using SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    var reg = new Region();
-                    reg.Id = reader.GetInt32(0); //index 0 dari db
-                    reg.Name = reader.GetString(1); //index 1 dari db
-                    region.Add(reg);
+                    var regions = new Region();
+                    regions.Id = reader.GetInt32(0); //index 0 dari db
+                    regions.Name = reader.GetString(1); //index 1 dari db
+                    region.Add(regions);
                 }
             }
             else
             {
-                Console.WriteLine("Data not found");
+                _handling.NotFound();
             }
             reader.Close();
         }
@@ -51,13 +47,11 @@ public class Region
         connection.Close();
         return region;
     }
-    public int InsertRegion(string name)
+    public int Insert(string Name)
     {
         int result = 0;
-        //connection = new SqlConnection(connectionString);
-
-        //connection.Open();
-        SqlConnection connection = Connection.GetConnection();
+        SqlConnection connection = AllConnection.GetConnection();
+        connection.Open();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {
@@ -68,7 +62,7 @@ public class Region
 
             SqlParameter pName = new SqlParameter();
             pName.ParameterName = "@region_name";
-            pName.Value = name;
+            pName.Value = Name;
             pName.SqlDbType = SqlDbType.VarChar;
 
             command.Parameters.Add(pName);
@@ -92,14 +86,14 @@ public class Region
         return result;
     }
 
-    public List<Region> GetRegionById(int id)
+    public Region GetById(int Id)
     {
-        var region = new List<Region>();
+        SqlConnection connection = AllConnection.GetConnection();
+        connection.Open();
+        var regions = new Region();
         try
         {
-            //connection = new SqlConnection(connectionString);
             //instance command
-            SqlConnection connection = Connection.GetConnection();
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = "SELECT * FROM tb_m_regions WHERE id = @id";
@@ -108,7 +102,7 @@ public class Region
             //connection.Open();
             SqlParameter pName = new SqlParameter();
             pName.ParameterName = "@id";
-            pName.Value = id;
+            pName.Value = Id;
             pName.SqlDbType = SqlDbType.Int;
 
             command.Parameters.Add(pName);
@@ -116,17 +110,13 @@ public class Region
             using SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
-                while (reader.Read())
-                {
-                    var reg = new Region();
-                    reg.Id = reader.GetInt32(0); //index 0 dari db
-                    reg.Name = reader.GetString(1); //index 1 dari db
-                    region.Add(reg);
-                }
+                reader.Read();
+                regions.Id = reader.GetInt32(0); //index 0 dari db
+                regions.Name = reader.GetString(1); //index 1 dari db
             }
             else
             {
-                Console.WriteLine("Data not found");
+                regions = new Region();
             }
             reader.Close();
         }
@@ -135,16 +125,14 @@ public class Region
             Console.WriteLine(ex.Message);
         }
         connection.Close();
-        return region;
+        return regions;
     }
 
-    public int UpdateRegion(int id, string nama)
+    public int Update(int Id, string Nama)
     {
         int result = 0;
-        /*connection = new SqlConnection(connectionString);
-
-        connection.Open();*/
-        SqlConnection connection = Connection.GetConnection();
+        SqlConnection connection = AllConnection.GetConnection();
+        connection.Open();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {
@@ -155,12 +143,12 @@ public class Region
 
             SqlParameter pName = new SqlParameter();
             pName.ParameterName = "@region_name";
-            pName.Value = nama;
+            pName.Value = Nama;
             pName.SqlDbType = SqlDbType.VarChar;
 
             SqlParameter pId = new SqlParameter();
             pId.ParameterName = "@id";
-            pId.Value = id;
+            pId.Value = Id;
             pId.SqlDbType = SqlDbType.Int;
 
             command.Parameters.Add(pName);
@@ -184,13 +172,11 @@ public class Region
         connection.Close();
         return result;
     }
-    public int DeleteRegion(int id)
+    public int Delete(int Id)
     {
         int result = 0;
-        /*connection = new SqlConnection(connectionString);
-
-        connection.Open();*/
-        SqlConnection connection = Connection.GetConnection();
+        SqlConnection connection = AllConnection.GetConnection();
+        connection.Open();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {
@@ -201,7 +187,7 @@ public class Region
 
             SqlParameter pId = new SqlParameter();
             pId.ParameterName = "@id";
-            pId.Value = id;
+            pId.Value = Id;
             pId.SqlDbType = SqlDbType.Int;
 
             command.Parameters.Add(pId);

@@ -1,4 +1,4 @@
-﻿namespace DatabaseConnection;
+﻿namespace DatabaseConnection.Models;
 
 public class UserSoal1
 {

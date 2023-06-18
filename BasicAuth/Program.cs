@@ -1,4 +1,6 @@
 ﻿
+using BasicAuth.Controllers;
+
 namespace BasicAuth;
 public class BasicAuth
 {

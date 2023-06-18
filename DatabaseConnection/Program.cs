@@ -1,10 +1,12 @@
-﻿namespace DatabaseConnection;
+﻿using DatabaseConnection.Controllers;
+
+namespace DatabaseConnection;
 
 public class DatabaseConnection
 {
     public static void Main(string[] args)
     {
-        show menu = new show();
+        MainMenu menu = new MainMenu();
         menu.menu();
     }
 }

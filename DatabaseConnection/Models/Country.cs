@@ -1,47 +1,45 @@
-﻿using System.Data;
+﻿using DatabaseConnection.Contexts;
+using DatabaseConnection.Views;
+using System.Data;
 using System.Data.SqlClient;
 
-namespace DatabaseConnection;
+namespace DatabaseConnection.Models;
 
 public class Country
 {
-    public string id { get; set; }
-    public string name { get; set; }
-    public int region_id { get; set; }
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public int RegionId { get; set; }
 
-    //string connectionString = "Data Source=DESKTOP-0GM6MAB\\MSSQLSERVER01;Database=db_hr;Integrated Security=True;Connect Timeout=30;";
-    SqlConnection connection = Connection.GetConnection();
+    private Handling _handling = new Handling();
 
-    public List<Country> GetAllCountry()
+    public List<Country> GetAll()
     {
+        SqlConnection connection = AllConnection.GetConnection();
+        connection.Open();
         var country = new List<Country>();
         try
         {
-            //connection = new SqlConnection(connectionString);
-            //SqlConnection connection = Connection.GetConnection();
             //instance command
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = "SELECT * FROM tb_m_countries";
-
-            //membuka koneksi
-            //connection.Open();
 
             using SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    var count = new Country();
-                    count.id = reader.GetString(0); //index 0 dari db
-                    count.name = reader.GetString(1); //index 1 dari db
-                    count.region_id = reader.GetInt32(2);
-                    country.Add(count);
+                    var Country = new Country();
+                    Country.Id = reader.GetString(0); //index 0 dari db
+                    Country.Name = reader.GetString(1); //index 1 dari db
+                    Country.RegionId = reader.GetInt32(2);
+                    country.Add(Country);
                 }
             }
             else
             {
-                Console.WriteLine("Data not found");
+                _handling.NotFound();
             }
             reader.Close();
         }
@@ -53,13 +51,11 @@ public class Country
         return country;
     }
 
-    public int InsertCountry(string id, string name, int reg_id)
+    public int Insert(string Id, string Name, int RegionId)
     {
         int result = 0;
-        SqlConnection connection = Connection.GetConnection();
-        //connection = new SqlConnection(connectionString);
-
-        //connection.Open();
+        SqlConnection connection = AllConnection.GetConnection();
+        connection.Open();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {
@@ -70,17 +66,17 @@ public class Country
 
             SqlParameter pId = new SqlParameter();
             pId.ParameterName = "@id";
-            pId.Value = id;
+            pId.Value = Id;
             pId.SqlDbType = SqlDbType.VarChar;
 
             SqlParameter pName = new SqlParameter();
             pName.ParameterName = "@country_name";
-            pName.Value = name;
+            pName.Value = Name;
             pName.SqlDbType = SqlDbType.VarChar;
 
             SqlParameter pRegionId = new SqlParameter();
             pRegionId.ParameterName = "@region_id";
-            pRegionId.Value = reg_id;
+            pRegionId.Value = RegionId;
             pRegionId.SqlDbType = SqlDbType.Int;
 
             command.Parameters.Add(pId);
@@ -106,14 +102,14 @@ public class Country
         return result;
     }
 
-    public List<Country> GetCountryById(string id)
+    public Country GetById(string Id)
     {
-        var country = new List<Country>();
+        SqlConnection connection = AllConnection.GetConnection();
+        connection.Open();
+        var country = new Country();
         try
         {
-            //connection = new SqlConnection(connectionString);
             //instance command
-            SqlConnection connection = Connection.GetConnection();
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = "SELECT * FROM tb_m_countries WHERE id = @id";
@@ -122,7 +118,7 @@ public class Country
             //connection.Open();
             SqlParameter pName = new SqlParameter();
             pName.ParameterName = "@id";
-            pName.Value = id;
+            pName.Value = Id;
             pName.SqlDbType = SqlDbType.VarChar;
 
             command.Parameters.Add(pName);
@@ -130,18 +126,14 @@ public class Country
             using SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
-                while (reader.Read())
-                {
-                    var count = new Country();
-                    count.id = reader.GetString(0); //index 0 dari db
-                    count.name = reader.GetString(1); //index 1 dari db
-                    count.region_id = reader.GetInt32(2);
-                    country.Add(count);
-                }
+                reader.Read();
+                country.Id = reader.GetString(0); //index 0 dari db
+                country.Name = reader.GetString(1); //index 1 dari db
+                country.RegionId = reader.GetInt32(2);
             }
             else
             {
-                Console.WriteLine("Data not found");
+                country = new Country();
             }
             reader.Close();
         }
@@ -153,13 +145,11 @@ public class Country
         return country;
     }
 
-    public int UpdateCountry(string id, string nama, int region_id)
+    public int Update(string Id, string Nama, int RegionId)
     {
         int result = 0;
-        SqlConnection connection = Connection.GetConnection();
-        //connection = new SqlConnection(connectionString);
-
-        //connection.Open();
+        SqlConnection connection = AllConnection.GetConnection();
+        connection.Open();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {
@@ -170,17 +160,17 @@ public class Country
 
             SqlParameter pName = new SqlParameter();
             pName.ParameterName = "@country_name";
-            pName.Value = nama;
+            pName.Value = Nama;
             pName.SqlDbType = SqlDbType.VarChar;
 
             SqlParameter pId = new SqlParameter();
             pId.ParameterName = "@id";
-            pId.Value = id;
+            pId.Value = Id;
             pId.SqlDbType = SqlDbType.VarChar;
 
             SqlParameter pRegionId = new SqlParameter();
             pRegionId.ParameterName = "@region_id";
-            pRegionId.Value = region_id;
+            pRegionId.Value = RegionId;
             pRegionId.SqlDbType = SqlDbType.Int;
 
             command.Parameters.Add(pName);
@@ -205,13 +195,11 @@ public class Country
         connection.Close();
         return result;
     }
-    public int DeleteCountry(string id)
+    public int Delete(string Id)
     {
         int result = 0;
-        //connection = new SqlConnection(connectionString);
-
-        SqlConnection connection = Connection.GetConnection();
-        //connection.Open();
+        SqlConnection connection = AllConnection.GetConnection();
+        connection.Open();
         SqlTransaction transaction = connection.BeginTransaction();
         try
         {
@@ -222,7 +210,7 @@ public class Country
 
             SqlParameter pId = new SqlParameter();
             pId.ParameterName = "@id";
-            pId.Value = id;
+            pId.Value = Id;
             pId.SqlDbType = SqlDbType.VarChar;
 
             command.Parameters.Add(pId);
